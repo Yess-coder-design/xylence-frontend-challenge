@@ -1,162 +1,25 @@
-# Xylence — Senior Frontend UI/UX Challenge
+Startup Intelligence Feed
+Decisiones de diseño
+**Conviction score como barra horizontal + número tabular, con 3 tiers sutiles. Evalué ring, heatbar y dot-pattern. La barra gana para esta UX porque el caso de uso dominante es escaneo rápido: un analista recorre 30 cards comparando scores de un vistazo. La barra permite lectura relativa (¿más larga que la anterior?) y absoluta (número) en el mismo eje visual, sin consumir espacio vertical. El anillo dificulta la comparación entre elementos adyacentes; el heatbar introduce demasiado color y ruido en una lista que ya contiene tags, país, stage y trend. Añadí tres tiers (<60, 60–79, 80+) usando variaciones de gris en lugar de un espectro de color: ayuda al triaje sin sesgar la lectura.
 
-> Prueba técnica take-home para el rol de **Senior UI/UX Frontend Engineer**.
-> Tiempo estimado: **4–6 horas**. Plazo de entrega: **5 Días** desde que recibiste este repo.
+**Paleta restringida a 3 acentos semánticos. Trend up/down/neutral son los únicos elementos con color en la card principal. Los tipos de signal (team / market / traction / product) usan color únicamente dentro del breakdown expandido, nunca en estado colapsado. El resto opera en escala de grises. La premisa del brief — bajo ruido visual en una herramienta de trabajo — guía esta decisión.
 
----
+**Jerarquía de la card: identidad → contexto → narrativa → señales → acción. Nombre + trend arriba (quién es, hacia dónde va), metadata en una línea (stage · país · año), descripción limitada a 3 líneas, tags de sector, conviction score como ancla visual, y footer con funding + toggle de señales. El breakdown aparece al expandir sin reordenar la card. El score actúa como punto de gravedad; el resto aporta contexto.
 
-## 1. Contexto del producto
+**CSS Modules + variables CSS, sin Tailwind. Opté por CSS Modules para mantener encapsulación real por componente y evitar densidad innecesaria en JSX. Las decisiones de diseño (spacing, color, radius) viven en tokens centralizados, lo que permite consistencia sin sacrificar legibilidad en los diffs.
 
-**Xylence** es una plataforma de *inteligencia predictiva para venture capital en LATAM*. Ingerimos señales públicas y privadas sobre startups (contratación, tracción, menciones, fundadores, métricas de producto) y las sintetizamos en un **conviction score** — un indicador entre 0 y 100 que resume la probabilidad de que una startup se convierta en un outlier.
+**Zustand para UI state, React Query para server state. Zustand gestiona filtros, búsqueda (input controlado) y sort. React Query maneja el fetch y cacheo con queryKey: ["startups", filters] y placeholderData para evitar flashes de loading al cambiar filtros. El skeleton aparece solo en la carga inicial. La búsqueda aplica debounce (250ms) antes de disparar el query. No hay solapamiento de responsabilidades: cada herramienta resuelve lo suyo.
 
-Nuestros usuarios son **analistas de VC** que pasan de 4 a 6 horas diarias dentro del dashboard revisando deals, comparando señales y decidiendo a quién contactar esta semana. Lo que más les importa:
+**StartupCard como componente puro. Recibe { startup, index } por props, sin dependencia del store. El index solo controla el stagger de animación (limitado para evitar latencia percibida). El estado de expansión es local. Esto facilita testeo y reutilización.
 
-- **Velocidad de escaneo.** Necesitan descartar 50 startups en 20 minutos y quedarse con 5 que merezcan una llamada.
-- **Confianza en la señal.** No basta con mostrar un número; necesitan entender *por qué* el score es alto o bajo.
-- **Bajo ruido visual.** El dashboard es su herramienta de trabajo, no un showcase.
+**Animación de entrada sutil + prefers-reduced-motion. Un translateY(6px) + opacity con stagger comunica cambios en el feed sin ser intrusivo. Está limitado a los primeros elementos y desactivado para usuarios que prefieren menos movimiento.
 
-Con eso en mente, construye algo que un analista usaría con gusto todos los días.
+**Sin librerías externas de íconos. El set es mínimo (trends, chevron, search, close), así que los implementé en SVG inline. Esto elimina dependencias y mantiene consistencia visual. Escalaría a una librería si el set creciera significativamente.
 
----
+**Qué decidí NO construir y por qué URL query params. Útiles para compartir vistas, pero implican sincronización bidireccional (URL ↔ estado) con complejidad adicional. Para este caso, el estado se reconstruye rápidamente, así que el ROI es bajo. Virtualización. El volumen de datos no lo justifica. Premature optimization. Keyboard navigation completa en MultiSelect. Hay soporte básico accesible, pero no navegación avanzada con roving focus. Es un gap consciente si el producto evoluciona a uso intensivo de teclado. Pitch deck link. El tipo existe, pero no hay datos en el mock. Evité UI para un caso inexistente. Sticky filter bar. No aporta valor con el volumen actual. Métricas agregadas en el header. Desvían el foco de la decisión principal: evaluar startups individuales. Error UI compleja. Implementé un estado base con retry. Invertir más no aportaba valor real en este contexto. Inconsistencias y rarezas que noté stp_05 Raíz Logistics tiene un weight: 1.05, fuera del rango esperado. Visualmente se clamp a 100%, pero se muestra el valor real. La UI no debería ocultar inconsistencias del dato. stp_17 Íntegra tiene foundedYear: 2027. Probablemente intencional (startup en stealth). No se fuerza corrección. stp_17 no tiene signals. Se oculta el toggle de expansión en ese caso. stp_07 Aulabit no tiene funding. Se muestra como “Funding sin revelar” de forma discreta. Issue en tsc -b. Conflicto entre composite y noEmit. No afecta ejecución ni build con Vite. Lo dejo documentado porque impacta DX. Qué haría con más tiempo Sync de estado con URL Skeleton dinámico basado en último resultado Persistencia de sort por tipo Tooltips para país Integration test del flujo completo Dark mode (tokens ya preparados) Vista expandida en panel lateral Colaboración con IA
 
-## 2. El ejercicio
+**Utilicé IA como soporte puntual en revisión y refinamiento: validación de decisiones de UX, optimización de estilos y contraste de alternativas (especialmente en la representación del conviction score). También ayudó a detectar edge cases y a cuestionar decisiones para asegurar que estuvieran bien fundamentadas.
 
-Construye un **Startup Intelligence Feed** — una vista de lista o grid que muestre startups provenientes del mock API incluido en [src/api/mock.ts](src/api/mock.ts), con filtros y ordenamiento.
+Las decisiones de arquitectura, separación de responsabilidades, alcance del feature set y trade-offs de producto fueron deliberadas y tomadas de forma consciente. La IA funcionó como una segunda opinión técnica, no como origen de las soluciones.
 
-El `App.tsx` actual es solo un shell vacío con el título. Todo lo demás es tuyo: componentes, estilos, estructura de carpetas, decisiones de UX.
-
-> **Sobre el scope.** Preferimos un `StartupCard` y una jerarquía de lista con criterio impecable que una lista larga de features a medias. Si tienes que elegir, pule lo base antes de tocar los opcionales. El criterio de qué dejar fuera también es parte de lo que evaluamos.
-
-### 2.1. Requerido (base)
-
-Tu entrega debe cumplir al menos con esto:
-
-1. **Renderizar** la lista de startups consumida desde `fetchStartups()` vía **React Query**.
-2. **Loading state** mientras carga — usa un **skeleton** de la card, no un spinner genérico. Los analistas lo ven 30+ veces al día; cuenta.
-3. **Componente `StartupCard`** que muestre al menos:
-   - Nombre
-   - Stage
-   - Tags de sector
-   - **Conviction score** como un indicador visual (barra, anillo, heatbar, dot pattern — tú eliges; en tus decisiones de diseño justifica la elección)
-   - Trend indicator (up / down / neutral)
-   - País
-4. **Filtros funcionales** por:
-   - Stage (multi-select)
-   - Sector (multi-select)
-   - País (multi-select)
-5. **Ordenamiento** por:
-   - Conviction score
-   - Funding amount
-   - Founded year
-
-### 2.2. Opcional (diferenciadores)
-
-No tienes que hacer todos. Son oportunidades para mostrar profundidad donde te importe:
-
-- Animación de entrada de las cards al cargar o al cambiar filtros
-- Expandir una card para ver los `ConvictionSignals` como breakdown visual (por tipo: team / market / traction / product)
-- Búsqueda en tiempo real por nombre (con debounce)
-- Persistir filtros y búsqueda en la URL vía query params
-- Al menos **1 test unitario** del componente que consideres más crítico
-- Empty state bien diseñado cuando los filtros no devuelven resultados
-- Responsive decente (no hace falta mobile-first, pero que no se rompa en 1024px)
-
----
-
-## 3. Stack
-
-- **React 18 + TypeScript** — obligatorio
-- **Vite** — obligatorio
-- **React Query** (`@tanstack/react-query`) — obligatorio para server state
-- **Zustand** — úsalo si necesitas estado global (filtros, UI state); es opcional
-- **CSS Modules o Tailwind** — tú eliges; sé consistente
-- **Vitest + Testing Library** — para el test opcional
-- **Sin librerías de UI externas** (MUI, Chakra, Radix, shadcn, Ant, etc.). Todo custom.
-  - Excepción: sí puedes usar `lucide-react` u otro set de íconos. Justifícalo.
-
----
-
-## 4. Cómo correr el proyecto
-
-```bash
-pnpm install
-pnpm run dev
-```
-
-Otros scripts:
-
-```bash
-pnpm run build    # build de producción
-pnpm run test     # Vitest en modo watch
-pnpm run lint     # ESLint
-```
-
----
-
-## 5. Criterios de evaluación
-
-Esto es lo que miramos. En orden de peso aproximado:
-
-### Diseño visual & sensibilidad de UX (30%)
-No buscamos que sea *perfecto* — buscamos que sea *intencional*. Minimalista o elaborado, ambos son válidos siempre que haya coherencia: tipografía, espaciado, jerarquía, color. ¿Cómo se siente al usarlo? ¿Un analista podría escanear 30 cards rápido sin fatiga?
-
-### Arquitectura React/TypeScript (30%)
-Composición de componentes, separación de responsabilidades, dónde vive cada pieza de lógica. ¿La `StartupCard` es pura o está acoplada al store? ¿Hay hooks que extraen lógica reutilizable? ¿El código escalaría si mañana añadimos 10 filtros más?
-
-### Manejo de estado y data fetching (20%)
-Uso correcto de React Query (query keys, stale time, loading/error states). Separación entre server state y UI state. Si usas Zustand, que tenga sentido y no duplique lo que React Query ya hace.
-
-### Código limpio y tipado (20%)
-Tipos precisos (sin `any` injustificados ni `as` para silenciar errores). Nombres claros. Sin código muerto ni archivos de andamio sin uso. Consistencia en el estilo.
-
-### Lo que NO evaluamos
-- **Pixel-perfect** con ningún diseño. No hay Figma, es intencional — queremos ver tu criterio.
-- **Cantidad** de opcionales completados. Mejor 2 bien que 6 a medias.
-- **Animaciones complejas.** Si las haces, que tengan propósito.
-- **Cobertura de tests.** El test opcional es para ver *cómo* testeas, no cuánto.
-
----
-
-## 6. Entrega
-
-1. Súbelo a un repo público en tu GitHub.
-2. Asegúrate de que corre con `pnpm install && pnpm run dev` sin errores.
-3. Actualiza este README (o crea un `NOTES.md`) con:
-   - **Decisiones de diseño** que tomaste (mínimo un párrafo). Queremos leer *por qué* elegiste X sobre Y, no *qué* hiciste.
-   - **Qué decidí NO construir y por qué.** El scope es un ejercicio de criterio tanto como la implementación. Un senior tiene opiniones sobre lo que sobra.
-   - **Inconsistencias o rarezas** que notaste en los datos o en el scaffold, aunque no las hayas "arreglado". Lo que ves y decides no tocar cuenta tanto como lo que construyes.
-   - **Qué harías diferente con más tiempo.** Honestidad > perfección.
-   - **Cómo colaboraste con IA**, si aplica. No penalizamos el uso — todos la usamos. Sí valoramos que nos cuentes en qué decisiones la voz final fue tuya y en cuáles cediste. La honestidad aquí pesa más que la pureza.
-   - (Opcional) Screenshot o GIF corto del resultado.
-4. Manda un email con el link al repo.
-
-Si tienes una duda de scope, asume lo razonable y documéntalo. No te bloquees esperando respuesta.
-
----
-
-## 7. Estructura inicial del repo
-
-```
-xylence-frontend-challenge/
-├── README.md
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── index.html
-└── src/
-    ├── main.tsx              # entry + QueryClientProvider
-    ├── App.tsx               # shell vacío — empieza aquí
-    ├── index.css             # reset base mínimo
-    ├── api/
-    │   └── mock.ts           # fetchStartups() con delay simulado
-    ├── types/
-    │   └── index.ts          # Startup, ConvictionSignal, etc.
-    └── assets/
-        └── logo.png
-```
-
-Todo lo demás (componentes, hooks, styles, store, tests) lo organizas como veas. Nos interesa tu criterio.
-
----
-
-Buena suerte. Estamos emocionados de ver qué construyes.
+En algunos casos concretos incorporé sugerencias útiles — por ejemplo, el uso de tiers sutiles en la barra de conviction para mejorar el triaje sin introducir ruido visual — siempre filtradas bajo el criterio de mantener coherencia con el objetivo principal: velocidad de escaneo y bajo ruido.

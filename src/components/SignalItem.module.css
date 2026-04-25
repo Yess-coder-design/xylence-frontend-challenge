@@ -1,0 +1,134 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  min-width: 0;
+  height: 100%;
+  transition: border-color 160ms ease;
+}
+
+.item:hover {
+  border-color: var(--border-strong);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.titleBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.iconBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.iconBox[data-type="team"] {
+  background: color-mix(in srgb, var(--signal-team) 12%, transparent);
+  color: var(--signal-team);
+}
+.iconBox[data-type="market"] {
+  background: color-mix(in srgb, var(--signal-market) 12%, transparent);
+  color: var(--signal-market);
+}
+.iconBox[data-type="traction"] {
+  background: color-mix(in srgb, var(--signal-traction) 12%, transparent);
+  color: var(--signal-traction);
+}
+.iconBox[data-type="product"] {
+  background: color-mix(in srgb, var(--signal-product) 12%, transparent);
+  color: var(--signal-product);
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-1);
+  text-transform: uppercase;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.badge[data-type="team"] {
+  background: color-mix(in srgb, var(--signal-team) 12%, transparent);
+  color: var(--signal-team);
+}
+.badge[data-type="market"] {
+  background: color-mix(in srgb, var(--signal-market) 12%, transparent);
+  color: var(--signal-market);
+}
+.badge[data-type="traction"] {
+  background: color-mix(in srgb, var(--signal-traction) 12%, transparent);
+  color: var(--signal-traction);
+}
+.badge[data-type="product"] {
+  background: color-mix(in srgb, var(--signal-product) 12%, transparent);
+  color: var(--signal-product);
+}
+
+.label {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-2);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  flex: 1 1 auto;
+}
+
+.track {
+  height: 4px;
+  background: var(--track);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: auto;
+}
+
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fill[data-type="team"] {
+  background: var(--signal-team);
+}
+.fill[data-type="market"] {
+  background: var(--signal-market);
+}
+.fill[data-type="traction"] {
+  background: var(--signal-traction);
+}
+.fill[data-type="product"] {
+  background: var(--signal-product);
+}

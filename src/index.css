@@ -1,3 +1,50 @@
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --surface-muted: #fafaf9;
+  --border: #e6e7eb;
+  --border-strong: #d1d5db;
+  --text-1: #0f172a;
+  --text-2: #475569;
+  --text-3: #8a94a6;
+  --accent: #0f172a;
+  --accent-soft: #eef2f7;
+  --trend-up: #047857;
+  --trend-up-bg: #ecfdf5;
+  --trend-down: #b91c1c;
+  --trend-down-bg: #fef2f2;
+  --trend-neutral: #64748b;
+  --trend-neutral-bg: #f1f5f9;
+  --signal-team: #7c3aed;
+  --signal-market: #0284c7;
+  --signal-traction: #ea580c;
+  --signal-product: #0d9488;
+  --track: #edf0f4;
+  --chip-bg: #f1f5f9;
+  --chip-bg-hover: #e2e8f0;
+  --chip-active-bg: #0f172a;
+  --chip-active-fg: #ffffff;
+  --focus-ring: #1e40af;
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 14px -4px rgba(15, 23, 42, 0.08);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
 *,
 *::before,
 *::after {
@@ -12,33 +59,59 @@ body,
 }
 
 body {
-  font-family:
-    "Inter",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #0f172a;
-  background: #f8fafc;
+  color: var(--text-1);
+  background: var(--bg);
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+input,
+button,
+select {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .app-shell {
   min-height: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: var(--space-10) var(--space-6) var(--space-10);
+}
+
+.app-header {
+  margin-bottom: var(--space-8);
 }
 
 .app-header h1 {
   font-size: 20px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  margin: 0 0 32px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-1);
+  color: var(--text-1);
 }
 
-.app-content {
-  min-height: 200px;
+.app-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: var(--space-6) var(--space-4);
+  }
 }

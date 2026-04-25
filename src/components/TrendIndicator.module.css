@@ -1,0 +1,27 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pill[data-trend="up"] {
+  background: var(--trend-up-bg);
+  color: var(--trend-up);
+}
+
+.pill[data-trend="down"] {
+  background: var(--trend-down-bg);
+  color: var(--trend-down);
+}
+
+.pill[data-trend="neutral"] {
+  background: var(--trend-neutral-bg);
+  color: var(--trend-neutral);
+}
